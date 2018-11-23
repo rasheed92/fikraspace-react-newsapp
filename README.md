@@ -1,6 +1,6 @@
 # fikraspace-react-newsapp
 ## Week 3 Task 2
-### this app use to get new from [GitHub](https://newsapi.org/) use react to build it
+### this app use to get new from [newsapi](https://newsapi.org/) use react to build it
 
 ### feature :
 
