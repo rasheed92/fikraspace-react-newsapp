@@ -6,9 +6,9 @@
 
 * store the articles in browser local storage
 * search 
-* sort
-* new language
-* vote 
+* sort articles
+* articles language
+* vote on articles
 
 ### UI image:
 
