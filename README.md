@@ -10,6 +10,6 @@
 * new language
 * vote 
 
-index page  image:
+### UI image:
 
 ![Image of index](/index.png)
