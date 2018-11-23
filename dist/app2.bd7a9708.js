@@ -33200,17 +33200,12 @@ function (_Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(News).call(this));
     _this.state = {
       news: [],
-      new2: [],
       searchValue: '',
       sortBy: 'publishedAt',
-      CounterVote: [],
-      pSize: '',
+      pSize: '15',
       isLoading: true,
       Planguage: 'en'
     };
-
-    _this.componentDidMount();
-
     return _this;
   }
 
@@ -33221,11 +33216,12 @@ function (_Component) {
 
       var searchTerm = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'Iraq';
       var sortBy = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'publishedAt';
-      var pSize = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '10';
+      var pSize = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '15';
       var Planguage = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'en';
       fetch("https://newsapi.org/v2/everything?q=".concat(searchTerm, "&language=").concat(Planguage, "&pageSize=").concat(pSize, "&sortBy=").concat(sortBy, "&apiKey=978d6c3818ff431b8c210ae86550fb1f")).then(function (response) {
         return response.json();
       }).then(function (data) {
+        ///this process use to filter from api and add only useful data to our arry news
         var element = [];
 
         for (var index = 0; index < data.articles.length; index++) {
@@ -33239,19 +33235,19 @@ function (_Component) {
         }
 
         _this2.setState({
-          news: data.articles,
-          new2: element
+          news: element
         });
       });
-    }
+    } //this function used to set searchValue value from the input box
+
   }, {
     key: "onInputChange",
     value: function onInputChange(event) {
       this.setState({
         searchValue: event.target.value
       });
-      this.getNews(this.state.getNews);
-    }
+    } //this function used to take selected option to use in sort
+
   }, {
     key: "optionSortBy",
     value: function optionSortBy(event) {
@@ -33260,7 +33256,8 @@ function (_Component) {
       });
       this.getNews(this.state.sortBy);
       console.log(this.state.sortBy);
-    }
+    } //this function used to take selected option to use change lang.
+
   }, {
     key: "optionPlanguage",
     value: function optionPlanguage(event) {
@@ -33269,80 +33266,103 @@ function (_Component) {
       });
       this.getNews(this.state.Planguage);
       console.log(this.state.Planguage);
-    }
+    } //this function used to take selected option to use in page limit 
+
   }, {
     key: "optionPageSize",
     value: function optionPageSize(event) {
+      this.getNews(this.state.pSize);
       this.setState({
         pSize: event.target.value
       });
-      this.getNews(this.state.pSize);
       console.log(this.state.pSize);
-    }
+    } //this function used when press enter in  search box to set search stat 
+
   }, {
     key: "onKeyUp",
     value: function onKeyUp(event) {
       if (event.key == 'Enter') {
         this.getNews(this.state.searchValue);
         this.setState({
-          searchValue: '',
-          pSize: this.state.pSize,
-          Planguage: this.state.Planguage,
-          sortBy: this.state.sortBy
+          searchValue: ''
         });
       }
-    }
+    } //this function used to render data from localStorage
+
   }, {
     key: "componentDidMount",
     value: function componentDidMount() {
       if (localStorage.length == 0) {
         this.getNews();
-        console.log(this.state.searchValue);
       } else {
         this.setState({
-          new2: JSON.parse(localStorage.getItem('data'))
+          news: JSON.parse(localStorage.getItem('data'))
         });
+        alert("data from localStorage");
         console.log("data from localStorage");
-        console.log(this.state.searchValue);
       }
-    }
+    } //this function used to load data from localStorage
+
   }, {
     key: "componentWillMount",
     value: function componentWillMount() {
       localStorage.getItem('date') && this.setState({
-        new2: JSON.parse(localStorage.getItem('data'))
+        news: JSON.parse(localStorage.getItem('data'))
       });
-    }
+    } //this function used to update  localStorage data 
+
   }, {
     key: "componentWillUpdate",
     value: function componentWillUpdate(nextProps, nextState, i) {
-      localStorage.setItem('data', JSON.stringify(nextState.new2));
-    }
+      localStorage.setItem('data', JSON.stringify(nextState.news));
+    } //this function used to increase vote
+
   }, {
     key: "upvote",
     value: function upvote(i) {
-      console.log(this.state.new2[i]);
-      var upvote = this.state.new2[i][0];
+      var upvote = this.state.news[i][0];
       upvote.vote++;
       this.setState({
         upvote: upvote
-      }); //  this.state.new2[i][0].vote++
+      }); //that is another Solution
+      //  this.state.news[i][0].vote++
       //     this.state.CounterVote[index]=value
-      //  document.getElementById("description" + i).textContent =  this.state.new2[i][0].vote;
+      //  document.getElementById("description" + i).textContent =  this.state.news[i][0].vote;
+      //that is another Solution
+      // for (let index = 0; index < upvote.length; index++) {
+      //   upvote[index].addEventListener('click', (event) => {
+      //     this.state.CounterVote[index]++
+      //     console.log(index)
+      //     // console.log(upvote[index])
+      //     document.getElementById("description" + index).textContent = this.state.CounterVote[index];
+      //   })
+      // }
 
-      console.log(this.state.new2[i][0].vote); //this.componentWillUpdate()
-    }
+      console.log(this.state.news[i][0].vote);
+    } //this function used to decrease vote
+
   }, {
     key: "downvote",
     value: function downvote(i) {
-      var downvote = this.state.new2[i][0];
+      var downvote = this.state.news[i][0];
       downvote.vote--;
       this.setState({
         downvote: downvote
-      }); // this.state.new2[i][0].vote--
-      // document.getElementById("description" + i).textContent =  this.state.new2[i][0].vote;
-      // this.loadDB()
-    }
+      }); //that is another Solution
+      //  this.state.news[i][0].vote--
+      //     this.state.CounterVote[index]=value
+      //  document.getElementById("description" + i).textContent =  this.state.news[i][0].vote;
+      //that is another Solution
+      // for (let index = 0; index < upvote.length; index++) {
+      //   upvote[index].addEventListener('click', (event) => {
+      //     this.state.CounterVote[index]--
+      //     console.log(index)
+      //     // console.log(upvote[index])
+      //     document.getElementById("description" + index).textContent = this.state.CounterVote[index];
+      //   })
+      // }
+    } //this function used to render html
+
   }, {
     key: "render",
     value: function render() {
@@ -33357,6 +33377,8 @@ function (_Component) {
         value: this.state.searchValue,
         placeholder: "search term"
       })), _react.default.createElement("div", null, _react.default.createElement(SortOption, {
+        defaultValue: "publishedAt",
+        selected: "publishedAt",
         onChange: this.optionSortBy.bind(this)
       }, _react.default.createElement("option", {
         value: "publishedAt",
@@ -33366,19 +33388,22 @@ function (_Component) {
       }, "Relevancy"), _react.default.createElement("option", {
         value: "popularity"
       }, "Most Probably")), _react.default.createElement(Pagelimit, {
+        selected: "15",
+        defaultValue: "15",
         onChange: this.optionPageSize.bind(this)
       }, _react.default.createElement("option", {
         value: "20"
       }, "20"), _react.default.createElement("option", {
-        value: "15"
+        value: "15",
+        selected: true
       }, "15"), _react.default.createElement("option", {
         value: "10"
       }, "10"), _react.default.createElement("option", {
-        value: "5",
-        defaultValue: this.pSize,
-        selected: true
+        value: "5"
       }, "5")), _react.default.createElement(PageLang, {
-        onChange: this.optionPlanguage.bind(this)
+        defaultValue: "publishedAt",
+        onChange: this.optionPlanguage.bind(this),
+        selected: "en"
       }, _react.default.createElement("option", {
         value: "en",
         selected: true
@@ -33388,7 +33413,7 @@ function (_Component) {
         value: "de"
       }, "de"), _react.default.createElement("option", {
         value: "es"
-      }, "es"))), _react.default.createElement(NewsContainer, null, this.state.new2.map(function (item, i) {
+      }, "es"))), _react.default.createElement(NewsContainer, null, this.state.news.map(function (item, i) {
         return _react.default.createElement(NewsItem, {
           key: i
         }, _react.default.createElement("img", {
@@ -33445,7 +33470,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63064" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54435" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

@@ -33053,8 +33053,18 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-function _templateObject10() {
+function _templateObject11() {
   var data = _taggedTemplateLiteral(["\nheight: 20px;\nwidth: 20px;\nmargin: auto\n\n"]);
+
+  _templateObject11 = function _templateObject11() {
+    return data;
+  };
+
+  return data;
+}
+
+function _templateObject10() {
+  var data = _taggedTemplateLiteral(["\ndisplay: flex;\nflex-direction: column;\njustify-content: center;\ntext-align: center;\nflex-grow: 1;\nmargin: auto\n"]);
 
   _templateObject10 = function _templateObject10() {
     return data;
@@ -33064,7 +33074,7 @@ function _templateObject10() {
 }
 
 function _templateObject9() {
-  var data = _taggedTemplateLiteral(["\ndisplay: flex;\nflex-direction: column;\njustify-content: center;\ntext-align: center;\nflex-grow: 1;\n"]);
+  var data = _taggedTemplateLiteral(["\npadding: 0px 32px;\nheight: 32px;\njustify-items: center;\njustify-content: center;\nmargin: 0px 1px 6px 504px;\nfont-size: 20px;\nbackground-color: #8e8e8e;\ncolor: #ffffff;\n"]);
 
   _templateObject9 = function _templateObject9() {
     return data;
@@ -33074,7 +33084,7 @@ function _templateObject9() {
 }
 
 function _templateObject8() {
-  var data = _taggedTemplateLiteral(["\npadding: 0px 32px;\nheight: 32px;\njustify-items: center;\njustify-content: center;\nmargin: 0px 1px 6px 183px;\nfont-size: 20px;\nbackground-color: #8e8e8e;\ncolor: #ffffff;\n"]);
+  var data = _taggedTemplateLiteral(["\npadding: 0px 32px;\nheight: 32px;\njustify-items: center;\njustify-content: center;\nmargin: 0px 1px 6px 494px;\nfont-size: 20px;\nbackground-color: #8e8e8e;\ncolor: #ffffff;\n"]);
 
   _templateObject8 = function _templateObject8() {
     return data;
@@ -33104,7 +33114,7 @@ function _templateObject6() {
 }
 
 function _templateObject5() {
-  var data = _taggedTemplateLiteral(["\n  padding-left: 14px;\n  position: relative;\n"]);
+  var data = _taggedTemplateLiteral(["\n  padding-left: 14px;\n  position: relative;\n  flex-basis:800px;\n  flex-grow: 2;\n"]);
 
   _templateObject5 = function _templateObject5() {
     return data;
@@ -33114,7 +33124,7 @@ function _templateObject5() {
 }
 
 function _templateObject4() {
-  var data = _taggedTemplateLiteral(["\n  background-color: #fff;\n  border: 2px solid #E5E9F2;\n  min-height: 150px;\n  margin: 20px 0px;\n  border-radius: 4px;\n  display: flex;\n  padding: 10px;\n  flex-grow: 2;\n"]);
+  var data = _taggedTemplateLiteral(["\n  background-color: #fff;\n  border: 2px solid #E5E9F2;\n  min-height: 150px;\n  margin: 20px 0px;\n  border-radius: 4px;\n  display: flex;\n  padding: 10px;\n  \n"]);
 
   _templateObject4 = function _templateObject4() {
     return data;
@@ -33124,7 +33134,7 @@ function _templateObject4() {
 }
 
 function _templateObject3() {
-  var data = _taggedTemplateLiteral(["\n  background-color: red;\n  padding: 20px 10%;\n\n"]);
+  var data = _taggedTemplateLiteral(["\n  background-color: #ebf2f5;\n  padding: 20px 10%;\n\n"]);
 
   _templateObject3 = function _templateObject3() {
     return data;
@@ -33144,7 +33154,7 @@ function _templateObject2() {
 }
 
 function _templateObject() {
-  var data = _taggedTemplateLiteral(["\n  border-radius: 20px;\n  background-color: #000;\n  color: #fff;\n  font-size: 1.2rem;\n  border: 0px;\n  height: 40px;\n  outline: none;\n  padding: 0 10px;\n"]);
+  var data = _taggedTemplateLiteral(["\n  border-radius: 20px;\n  background-color: #000;\n  color: #ffff;\n  font-size: 1.2rem;\n  border: 0px;\n  height: 40px;\n  outline: none;\n  padding: 0 10px;\n"]);
 
   _templateObject = function _templateObject() {
     return data;
@@ -33154,8 +33164,6 @@ function _templateObject() {
 }
 
 function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
-
-var arr = [];
 
 var SearchBox = _styledComponents.default.input(_templateObject());
 
@@ -33173,9 +33181,11 @@ var SortOption = _styledComponents.default.select(_templateObject7());
 
 var Pagelimit = _styledComponents.default.select(_templateObject8());
 
-var Vdiv = _styledComponents.default.div(_templateObject9());
+var PageLang = _styledComponents.default.select(_templateObject9());
 
-var VoteImg = _styledComponents.default.img(_templateObject10());
+var Vdiv = _styledComponents.default.div(_templateObject10());
+
+var VoteImg = _styledComponents.default.img(_templateObject11());
 
 var News =
 /*#__PURE__*/
@@ -33192,16 +33202,10 @@ function (_Component) {
       news: [],
       searchValue: '',
       sortBy: 'publishedAt',
-      CounterVote: [],
-      pageSize: '15',
-      storge: [{
-        text: '',
-        vote: ''
-      }]
+      pSize: '15',
+      isLoading: true,
+      Planguage: 'en'
     };
-
-    _this.getNews();
-
     return _this;
   }
 
@@ -33212,31 +33216,38 @@ function (_Component) {
 
       var searchTerm = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'Iraq';
       var sortBy = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'publishedAt';
-      var pageSize = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '15';
-      fetch("https://newsapi.org/v2/everything?q=".concat(searchTerm, "&sortBy=").concat(sortBy, "&pageSize=").concat(pageSize, "&apiKey=978d6c3818ff431b8c210ae86550fb1f")).then(function (response) {
+      var pSize = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '15';
+      var Planguage = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'en';
+      fetch("https://newsapi.org/v2/everything?q=".concat(searchTerm, "&language=").concat(Planguage, "&pageSize=").concat(pSize, "&sortBy=").concat(sortBy, "&apiKey=978d6c3818ff431b8c210ae86550fb1f")).then(function (response) {
         return response.json();
       }).then(function (data) {
+        ///this process use to filter from api and add only useful data to our arry news
+        var element = [];
+
+        for (var index = 0; index < data.articles.length; index++) {
+          element[index] = [{
+            title: data.articles[index].title,
+            description: data.articles[index].description,
+            publishedAt: data.articles[index].publishedAt,
+            urlToImage: data.articles[index].urlToImage,
+            vote: 1
+          }];
+        }
+
         _this2.setState({
-          news: data.articles
+          news: element
         });
-
-        console.log(data.articles[1].source);
-        console.log(data.articles);
       });
+    } //this function used to set searchValue value from the input box
 
-      for (var index = 0; index < 20; index++) {
-        arr.push(1);
-        this.state.CounterVote = arr;
-      }
-    }
   }, {
     key: "onInputChange",
     value: function onInputChange(event) {
       this.setState({
         searchValue: event.target.value
       });
-      console.log(this.state.CounterVote);
-    }
+    } //this function used to take selected option to use in sort
+
   }, {
     key: "optionSortBy",
     value: function optionSortBy(event) {
@@ -33245,16 +33256,28 @@ function (_Component) {
       });
       this.getNews(this.state.sortBy);
       console.log(this.state.sortBy);
-    }
+    } //this function used to take selected option to use change lang.
+
+  }, {
+    key: "optionPlanguage",
+    value: function optionPlanguage(event) {
+      this.setState({
+        Planguage: event.target.value
+      });
+      this.getNews(this.state.Planguage);
+      console.log(this.state.Planguage);
+    } //this function used to take selected option to use in page limit 
+
   }, {
     key: "optionPageSize",
     value: function optionPageSize(event) {
+      this.getNews(this.state.pSize);
       this.setState({
-        pageSize: event.target.value
+        pSize: event.target.value
       });
-      this.getNews(this.state.pageSize);
-      console.log(this.state.pageSize);
-    }
+      console.log(this.state.pSize);
+    } //this function used when press enter in  search box to set search stat 
+
   }, {
     key: "onKeyUp",
     value: function onKeyUp(event) {
@@ -33264,59 +33287,86 @@ function (_Component) {
           searchValue: ''
         });
       }
-    }
+    } //this function used to render data from localStorage
+
+  }, {
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      if (localStorage.length == 0) {
+        this.getNews();
+      } else {
+        this.setState({
+          news: JSON.parse(localStorage.getItem('data'))
+        });
+        alert("data from localStorage");
+        console.log("data from localStorage");
+      }
+    } //this function used to load data from localStorage
+
+  }, {
+    key: "componentWillMount",
+    value: function componentWillMount() {
+      localStorage.getItem('date') && this.setState({
+        news: JSON.parse(localStorage.getItem('data'))
+      });
+    } //this function used to update  localStorage data 
+
+  }, {
+    key: "componentWillUpdate",
+    value: function componentWillUpdate(nextProps, nextState, i) {
+      localStorage.setItem('data', JSON.stringify(nextState.news));
+    } //this function used to increase vote
+
   }, {
     key: "upvote",
-    value: function upvote() {
-      var _this3 = this;
-
-      var upvote = document.getElementsByClassName('up'); // if (arr.length == 0) {
-      //   for (let index = 0; index < upvote.length; index++) {
-      //     arr.push(1);
-      //     this.state.CounterVote[index] = arr[index]
-      //   }
+    value: function upvote(i) {
+      var upvote = this.state.news[i][0];
+      upvote.vote++;
+      this.setState({
+        upvote: upvote
+      }); //that is another Solution
+      //  this.state.news[i][0].vote++
+      //     this.state.CounterVote[index]=value
+      //  document.getElementById("description" + i).textContent =  this.state.news[i][0].vote;
+      //that is another Solution
+      // for (let index = 0; index < upvote.length; index++) {
+      //   upvote[index].addEventListener('click', (event) => {
+      //     this.state.CounterVote[index]++
+      //     console.log(index)
+      //     // console.log(upvote[index])
+      //     document.getElementById("description" + index).textContent = this.state.CounterVote[index];
+      //   })
       // }
 
-      var _loop = function _loop(index) {
-        upvote[index].addEventListener('click', function (event) {
-          _this3.state.CounterVote[index]++;
-          console.log(index); // console.log(upvote[index])
+      console.log(this.state.news[i][0].vote);
+    } //this function used to decrease vote
 
-          document.getElementById("description" + index).textContent = _this3.state.CounterVote[index];
-        });
-      };
-
-      for (var index = 0; index < upvote.length; index++) {
-        _loop(index);
-      }
-    }
   }, {
     key: "downvote",
-    value: function downvote() {
-      var upvote = document.getElementsByClassName('down'); // if (arr.length == 0) {
-      //   for (let index = 0; index < upvote.length; index++) {
-      //     arr.push(1);
-      //     // this.state.CounterVote[index] = arr[index]
-      //   }
+    value: function downvote(i) {
+      var downvote = this.state.news[i][0];
+      downvote.vote--;
+      this.setState({
+        downvote: downvote
+      }); //that is another Solution
+      //  this.state.news[i][0].vote--
+      //     this.state.CounterVote[index]=value
+      //  document.getElementById("description" + i).textContent =  this.state.news[i][0].vote;
+      //that is another Solution
+      // for (let index = 0; index < upvote.length; index++) {
+      //   upvote[index].addEventListener('click', (event) => {
+      //     this.state.CounterVote[index]--
+      //     console.log(index)
+      //     // console.log(upvote[index])
+      //     document.getElementById("description" + index).textContent = this.state.CounterVote[index];
+      //   })
       // }
+    } //this function used to render html
 
-      var _loop2 = function _loop2(index) {
-        upvote[index].addEventListener('click', function (event) {
-          arr[index]--;
-          console.log(index); // console.log(upvote[index])
-
-          document.getElementById("description" + index).textContent = arr[index];
-        });
-      };
-
-      for (var index = 0; index < upvote.length; index++) {
-        _loop2(index);
-      }
-    }
   }, {
     key: "render",
     value: function render() {
-      var _this4 = this;
+      var _this3 = this;
 
       return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(Navigation, null, _react.default.createElement("img", {
         width: "150px;",
@@ -33327,38 +33377,57 @@ function (_Component) {
         value: this.state.searchValue,
         placeholder: "search term"
       })), _react.default.createElement("div", null, _react.default.createElement(SortOption, {
-        defaultValue: this.sortBy,
+        defaultValue: "publishedAt",
+        selected: "publishedAt",
         onChange: this.optionSortBy.bind(this)
       }, _react.default.createElement("option", {
-        value: "relevancy"
-      }, "relevancy"), _react.default.createElement("option", {
-        value: "popularity"
-      }, "popularity"), _react.default.createElement("option", {
+        value: "publishedAt",
         selected: true
-      }, "SortBy")), _react.default.createElement(Pagelimit, {
-        defaultValue: this.pageSize,
+      }, "Newest Articles"), _react.default.createElement("option", {
+        value: "relevancy"
+      }, "Relevancy"), _react.default.createElement("option", {
+        value: "popularity"
+      }, "Most Probably")), _react.default.createElement(Pagelimit, {
+        selected: "15",
+        defaultValue: "15",
         onChange: this.optionPageSize.bind(this)
       }, _react.default.createElement("option", {
+        value: "20"
+      }, "20"), _react.default.createElement("option", {
+        value: "15",
+        selected: true
+      }, "15"), _react.default.createElement("option", {
         value: "10"
       }, "10"), _react.default.createElement("option", {
-        value: "15"
-      }, "15"), _react.default.createElement("option", {
+        value: "5"
+      }, "5")), _react.default.createElement(PageLang, {
+        defaultValue: "publishedAt",
+        onChange: this.optionPlanguage.bind(this),
+        selected: "en"
+      }, _react.default.createElement("option", {
+        value: "en",
         selected: true
-      }, "pageSize"))), _react.default.createElement(NewsContainer, null, this.state.news.map(function (item, i) {
+      }, "en"), _react.default.createElement("option", {
+        value: "ar"
+      }, "ar"), _react.default.createElement("option", {
+        value: "de"
+      }, "de"), _react.default.createElement("option", {
+        value: "es"
+      }, "es"))), _react.default.createElement(NewsContainer, null, this.state.news.map(function (item, i) {
         return _react.default.createElement(NewsItem, {
           key: i
         }, _react.default.createElement("img", {
           width: "124px;",
           height: "124px",
-          src: item.urlToImage
-        }), _react.default.createElement(NewsText, null, _react.default.createElement("h1", null, item.title), _react.default.createElement("p", null, item.description), _react.default.createElement(DateTime, null, item.publishedAt)), _react.default.createElement(Vdiv, null, _react.default.createElement(VoteImg, {
-          onClick: _this4.upvote.bind(_this4),
+          src: item[0].urlToImage
+        }), _react.default.createElement(NewsText, null, _react.default.createElement("h1", null, item[0].title), _react.default.createElement("p", null, item[0].description), _react.default.createElement(DateTime, null, item[0].publishedAt)), _react.default.createElement(Vdiv, null, _react.default.createElement(VoteImg, {
+          onClick: _this3.upvote.bind(_this3, i),
           className: "up",
           src: require('./assets/upvote.svg')
         }), _react.default.createElement("p", {
           id: "description" + i
-        }, arr[i]), _react.default.createElement(VoteImg, {
-          onClick: _this4.downvote.bind(_this4),
+        }, item[0].vote), _react.default.createElement(VoteImg, {
+          onClick: _this3.downvote.bind(_this3, i),
           className: "down",
           src: require('./assets/downvote.svg')
         })));
@@ -33401,7 +33470,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57941" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54435" + '/');
 
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);

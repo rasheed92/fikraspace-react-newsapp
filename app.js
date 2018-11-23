@@ -3,11 +3,11 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import styled from 'styled-components'
-let arr = []
+
 let SearchBox = styled.input`
   border-radius: 20px;
   background-color: #000;
-  color: #fff;
+  color: #ffff;
   font-size: 1.2rem;
   border: 0px;
   height: 40px;
@@ -24,7 +24,7 @@ let Navigation = styled.header`
 `
 
 let NewsContainer = styled.main`
-  background-color: red;
+  background-color: #ebf2f5;
   padding: 20px 10%;
 
 `
@@ -37,12 +37,14 @@ let NewsItem = styled.div`
   border-radius: 4px;
   display: flex;
   padding: 10px;
-  flex-grow: 2;
+  
 `
 
 let NewsText = styled.div`
   padding-left: 14px;
   position: relative;
+  flex-basis:800px;
+  flex-grow: 2;
 `
 
 let DateTime = styled.time`
@@ -67,7 +69,17 @@ padding: 0px 32px;
 height: 32px;
 justify-items: center;
 justify-content: center;
-margin: 0px 1px 6px 183px;
+margin: 0px 1px 6px 494px;
+font-size: 20px;
+background-color: #8e8e8e;
+color: #ffffff;
+`
+let PageLang = styled.select`
+padding: 0px 32px;
+height: 32px;
+justify-items: center;
+justify-content: center;
+margin: 0px 1px 6px 504px;
 font-size: 20px;
 background-color: #8e8e8e;
 color: #ffffff;
@@ -78,6 +90,7 @@ flex-direction: column;
 justify-content: center;
 text-align: center;
 flex-grow: 1;
+margin: auto
 `
 let VoteImg = styled.img`
 height: 20px;
@@ -85,59 +98,66 @@ width: 20px;
 margin: auto
 
 `
+
+
+
 class News extends Component {
 
   constructor() {
     super()
     this.state = {
       news: [],
-
       searchValue: '',
       sortBy: 'publishedAt',
-      CounterVote: [],
-      pageSize: '15',
-      storge :[{text:'',vote:''}],
+      pSize: '15',
+      isLoading: true,
+      Planguage: 'en'
     }
 
 
-    this.getNews()
+
 
 
   }
 
-  getNews(searchTerm = 'Iraq', sortBy = 'publishedAt', pageSize = '15') {
-    fetch(`https://newsapi.org/v2/everything?q=${searchTerm}&sortBy=${sortBy}&pageSize=${pageSize}&apiKey=978d6c3818ff431b8c210ae86550fb1f`)
+  getNews(searchTerm = 'Iraq', sortBy = 'publishedAt', pSize = '15', Planguage = 'en') {
+    fetch(`https://newsapi.org/v2/everything?q=${searchTerm}&language=${Planguage}&pageSize=${pSize}&sortBy=${sortBy}&apiKey=978d6c3818ff431b8c210ae86550fb1f`)
       .then((response) => {
         return response.json()
       })
       .then((data) => {
+
+        ///this process use to filter from api and add only useful data to our arry news
+        let element = []
+        for (let index = 0; index < data.articles.length; index++) {
+          element[index] = [{
+            title: data.articles[index].title,
+            description: data.articles[index].description,
+            publishedAt: data.articles[index].publishedAt,
+            urlToImage: data.articles[index].urlToImage,
+            vote: 1
+          }]
+
+        }
         this.setState({
-          news: data.articles,
+          news: element
 
 
         })
-        
-console.log( data.articles[1].source)
-console.log( data.articles)
-
       })
-      for (let index = 0; index < 20; index++) {
-        arr.push(1);
-        this.state.CounterVote= arr
-     
-      
-    
-    }
+
   }
 
- 
+  //this function used to set searchValue value from the input box
   onInputChange(event) {
     this.setState({
       searchValue: event.target.value
 
     })
-    console.log(this.state.CounterVote)
+
   }
+
+  //this function used to take selected option to use in sort
   optionSortBy(event) {
     this.setState({
       sortBy: event.target.value
@@ -147,18 +167,30 @@ console.log( data.articles)
     this.getNews(this.state.sortBy)
     console.log(this.state.sortBy)
   }
-
-  optionPageSize(event) {
+  //this function used to take selected option to use change lang.
+  optionPlanguage(event) {
     this.setState({
-      pageSize: event.target.value
+
+      Planguage: event.target.value
 
     })
 
-    this.getNews(this.state.pageSize)
-    console.log(this.state.pageSize)
+    this.getNews(this.state.Planguage)
+    console.log(this.state.Planguage)
+  }
+  //this function used to take selected option to use in page limit 
+  optionPageSize(event) {
+    this.getNews(this.state.pSize)
+    this.setState({
+      pSize: event.target.value
+
+    })
+
+
+    console.log(this.state.pSize)
   }
 
-
+  //this function used when press enter in  search box to set search stat 
   onKeyUp(event) {
     if (event.key == 'Enter') {
       this.getNews(this.state.searchValue)
@@ -167,56 +199,100 @@ console.log( data.articles)
       })
     }
   }
-  upvote() {
 
-    let upvote = document.getElementsByClassName('up')
-    // if (arr.length == 0) {
+  //this function used to render data from localStorage
+  componentDidMount() {
+    if (localStorage.length == 0) {
+      this.getNews()
 
-    //   for (let index = 0; index < upvote.length; index++) {
-    //     arr.push(1);
-    //     this.state.CounterVote[index] = arr[index]
-     
-    //   }
-     
-   
-    // }
-    for (let index = 0; index < upvote.length; index++) {
-      upvote[index].addEventListener('click', (event) => {
-        this.state.CounterVote[index]++
-        console.log(index)
-        // console.log(upvote[index])
-        document.getElementById("description" + index).textContent = this.state.CounterVote[index];
+    } else {
+      this.setState({
+        news: JSON.parse(localStorage.getItem('data')),
+
 
       })
-
+      alert("data from localStorage")
+      console.log("data from localStorage")
     }
+
 
   }
-  downvote() {
+  //this function used to load data from localStorage
+  componentWillMount() {
+    localStorage.getItem('date') && this.setState({
+      news: JSON.parse(localStorage.getItem('data')),
 
-    let upvote = document.getElementsByClassName('down')
-    // if (arr.length == 0) {
 
-    //   for (let index = 0; index < upvote.length; index++) {
-    //     arr.push(1);
-    //     // this.state.CounterVote[index] = arr[index]
-     
-    //   }
+    })
+  }
+  //this function used to update  localStorage data 
+  componentWillUpdate(nextProps, nextState, i) {
 
-    // }
-    for (let index = 0; index < upvote.length; index++) {
-      upvote[index].addEventListener('click', (event) => {
-        arr[index]--
-        console.log(index)
-        // console.log(upvote[index])
-        document.getElementById("description" + index).textContent = arr[index];
+    localStorage.setItem('data', JSON.stringify(nextState.news))
 
-      })
-
-    }
 
   }
 
+  //this function used to increase vote
+  upvote(i) {
+
+    let upvote = this.state.news[i][0]
+    upvote.vote++
+    this.setState({
+      upvote: upvote
+    })
+
+    //that is another Solution
+    //  this.state.news[i][0].vote++
+    //     this.state.CounterVote[index]=value
+    //  document.getElementById("description" + i).textContent =  this.state.news[i][0].vote;
+
+
+    //that is another Solution
+    // for (let index = 0; index < upvote.length; index++) {
+    //   upvote[index].addEventListener('click', (event) => {
+    //     this.state.CounterVote[index]++
+    //     console.log(index)
+    //     // console.log(upvote[index])
+    //     document.getElementById("description" + index).textContent = this.state.CounterVote[index];
+
+    //   })
+
+    // }
+
+    console.log(this.state.news[i][0].vote)
+
+  }
+
+
+  //this function used to decrease vote
+  downvote(i) {
+    let downvote = this.state.news[i][0]
+    downvote.vote--
+    this.setState({
+      downvote: downvote
+    })
+
+    //that is another Solution
+    //  this.state.news[i][0].vote--
+    //     this.state.CounterVote[index]=value
+    //  document.getElementById("description" + i).textContent =  this.state.news[i][0].vote;
+
+
+    //that is another Solution
+    // for (let index = 0; index < upvote.length; index++) {
+    //   upvote[index].addEventListener('click', (event) => {
+    //     this.state.CounterVote[index]--
+    //     console.log(index)
+    //     // console.log(upvote[index])
+    //     document.getElementById("description" + index).textContent = this.state.CounterVote[index];
+
+    //   })
+
+    // }
+
+  }
+  //this function used to render html
   render() {
 
     return (
@@ -229,16 +305,24 @@ console.log( data.articles)
             value={this.state.searchValue} placeholder="search term" />
         </Navigation>
         <div>
-          <SortOption defaultValue={this.sortBy} onChange={this.optionSortBy.bind(this)}>
-            <option value="relevancy">relevancy</option>
-            <option value="popularity">popularity</option>
-            <option selected>SortBy</option>
+          <SortOption  defaultValue="publishedAt"  selected="publishedAt" onChange={this.optionSortBy.bind(this)}>
+            <option value="publishedAt" selected>Newest Articles</option>
+            <option value="relevancy">Relevancy</option>
+            <option value="popularity">Most Probably</option>
           </SortOption>
-          <Pagelimit defaultValue={this.pageSize} onChange={this.optionPageSize.bind(this)}>
-            <option value="10">10</option>
-            <option value="15">15</option>
-            <option selected>pageSize</option>
+          <Pagelimit selected="15" defaultValue="15" onChange={this.optionPageSize.bind(this)}>
+            <option value="20">20</option>
+            <option value="15" selected>15</option>
+            <option value="10" >10</option>
+            <option value="5" >5</option>
           </Pagelimit>
+          <PageLang defaultValue="publishedAt" onChange={this.optionPlanguage.bind(this)} selected="en">
+            <option value="en" selected>en</option>
+            <option value="ar">ar</option>
+            <option value="de">de</option>
+            <option value="es">es</option>
+
+          </PageLang>
         </div>
         <NewsContainer>
           {
@@ -247,16 +331,16 @@ console.log( data.articles)
               return (
 
                 <NewsItem key={i}>
-                  <img width="124px;" height="124px" src={item.urlToImage} />
+                  <img width="124px;" height="124px" src={item[0].urlToImage} />
                   <NewsText>
-                    <h1>{item.title}</h1>
-                    <p>{item.description}</p>
-                    <DateTime>{item.publishedAt}</DateTime>
+                    <h1>{item[0].title}</h1>
+                    <p>{item[0].description}</p>
+                    <DateTime>{item[0].publishedAt}</DateTime>
                   </NewsText>
                   <Vdiv>
-                    <VoteImg onClick={this.upvote.bind(this)} className="up" src={require('./assets/upvote.svg')} />
-                    <p id={"description" + i}>{arr[i]}</p>
-                    <VoteImg onClick={this.downvote.bind(this)}  className="down" src={require('./assets/downvote.svg')} />
+                    <VoteImg onClick={this.upvote.bind(this, i)} className="up" src={require('./assets/upvote.svg')} />
+                    <p id={"description" + i}>{item[0].vote}</p>
+                    <VoteImg onClick={this.downvote.bind(this, i)} className="down" src={require('./assets/downvote.svg')} />
                   </Vdiv>
                 </NewsItem>
               )
@@ -264,25 +348,6 @@ console.log( data.articles)
           }
 
         </NewsContainer>
-        {/* <ul className="pagination">
-                <li className={pager.currentPage === 1 ? 'disabled' : ''}>
-                    <a onClick={() => this.setPage(1)}>First</a>
-                </li>
-                <li className={pager.currentPage === 1 ? 'disabled' : ''}>
-                    <a onClick={() => this.setPage(pager.currentPage - 1)}>Previous</a>
-                </li>
-                {pager.pages.map((page, index) =>
-                    <li key={index} className={pager.currentPage === page ? 'active' : ''}>
-                        <a onClick={() => this.setPage(page)}>{page}</a>
-                    </li>
-                )}
-                <li className={pager.currentPage === pager.totalPages ? 'disabled' : ''}>
-                    <a onClick={() => this.setPage(pager.currentPage + 1)}>Next</a>
-                </li>
-                <li className={pager.currentPage === pager.totalPages ? 'disabled' : ''}>
-                    <a onClick={() => this.setPage(pager.totalPages)}>Last</a>
-                </li>
-            </ul> */}
       </React.Fragment>
     )
   }
